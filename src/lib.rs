@@ -63,28 +63,25 @@ impl Universe {
     // a starting and ending col for our choosen pulsar - we will
     // return whether the given index in relation to the starting
     // coordinate is a dead or alive cell for initial pulsar gen
-    fn gen_pulsar(start_row: u32, start_col: u32, width: u32, index: u32) -> Cell {
-        //offset based on starting row and col
-        let curr_row = index as u32 / width;
-        let curr_col = index as u32 - (curr_row * width);
-
-        let row = curr_row - start_row;
-        let col = curr_col - start_col;
-
-        if row == 1 || row == 6 || row == 11 {
-            return Cell::Dead;
-        }
-        if row == 0 || row == 5 || row == 7 || row == 12 {
-            if col >= 2 && col <= 4 || col >= 8 && col <= 10 {
-                return Cell::Alive;
-            } else {
-                return Cell::Dead;
-            }
-        } else {
-            if col == 0 || col == 5 || col == 7 || col == 12 {
-                return Cell::Alive;
-            } else {
-                return Cell::Dead;
+    fn gen_pulsar(&mut self, index: usize) {
+        for row in 0..13 {
+            for col in 0..13 {
+                let idx = (index as u32 + row * self.width + col) as usize;
+                if row == 1 || row == 6 || row == 11 {
+                    self.cells[idx].kill();
+                } else if row == 0 || row == 5 || row == 7 || row == 12 {
+                    if col >= 2 && col <= 4 || col >= 8 && col <= 10 {
+                        self.cells[idx].birth();
+                    } else {
+                        self.cells[idx].kill();
+                    }
+                } else {
+                    if col == 0 || col == 5 || col == 7 || col == 12 {
+                        self.cells[idx].birth();
+                    } else {
+                        self.cells[idx].kill();
+                    }
+                }
             }
         }
     }
@@ -104,6 +101,14 @@ impl Cell {
             Cell::Dead => Cell::Alive,
             Cell::Alive => Cell::Dead,
         };
+    }
+
+    fn birth(&mut self) {
+        *self = Cell::Alive;
+    }
+    
+    fn kill(&mut self) {
+        *self = Cell::Dead;
     }
 }
 
@@ -134,8 +139,6 @@ impl Universe {
 
         let cells = (0..width * height)
             .map(|i| {
-                // if i >= p_start_idx && i < p_end_idx {
-                //    return Universe::gen_pulsar(start_pulsar_row, start_pulsar_col, width, i);
                 if i % 2 == 0 || i % 7 == 0 {
                     Cell::Alive
                 } else {
@@ -176,6 +179,12 @@ impl Universe {
     pub fn toggle_cell(&mut self, row: u32, column: u32) {
         let idx = self.get_index(row, column);
         self.cells[idx].toggle();
+    }
+
+    pub fn add_pulsar(&mut self, row: u32, column: u32) {
+        let idx = self.get_index(row, column);
+        self.gen_pulsar(idx);
+        
     }
 
     pub fn tick(&mut self) {
