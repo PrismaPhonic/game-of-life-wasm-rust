@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Hello wasm-pack!</title>
+    <style>
+      body {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="btn btn-primary" id="play-pause">Play/Pause</button>
+    <button class="btn btn-primary" id="clear-board">Clear Board</button>
+    <button class="btn btn-primary" id="pulsar">Pulsar</button> <input
+    type="range" min="5" max="100" value = "30" class="slider" id="fps-slider">
+    <canvas id="game-of-life-canvas"></canvas>
+    <script src="./bootstrap.js"></script>
+  </body>
+</html>
