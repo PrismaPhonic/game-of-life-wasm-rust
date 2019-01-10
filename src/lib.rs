@@ -27,6 +27,16 @@ impl Universe {
         index as u32 % self.width
     }
 
+    /// Generate spaceship based on clicked index
+    fn gen_spaceship(&mut self, row: u32, col: u32) {
+        self.set_cells(&[
+            (row + 1, col + 2),
+            (row + 2, col + 3),
+            (row + 3, col + 1),
+            (row + 3, col + 2),
+            (row + 3, col + 3),
+        ]);
+    }
 
     /// Get the dead and alive values of the entire universe.
     pub fn get_cells(&self) -> &[Cell] {
@@ -109,7 +119,7 @@ impl Cell {
     fn birth(&mut self) {
         *self = Cell::Alive;
     }
-    
+
     fn kill(&mut self) {
         *self = Cell::Dead;
     }
@@ -129,16 +139,6 @@ impl Universe {
 
         let width = 64;
         let height = 64;
-
-        // We'll make a pulsar centered about the grid
-        // let start_pulsar_row = (width / 2) - 6;
-        // let start_pulsar_col = (height / 2) - 6;
-
-        // let end_pulsar_row = start_pulsar_row + 12;
-        // let end_pulsar_col = start_pulsar_col + 13;
-
-        // let p_start_idx = start_pulsar_row * width + start_pulsar_col;
-        // let p_end_idx = end_pulsar_row * width + end_pulsar_col;
 
         let cells = (0..width * height)
             .map(|i| {
@@ -175,6 +175,11 @@ impl Universe {
         self.cells = (0..self.width * height).map(|_| Cell::Dead).collect();
     }
 
+    /// Clear the universe (all cells dead)
+    pub fn kill_all(&mut self) {
+        self.cells = (0..self.width * self.height).map(|_| Cell::Dead).collect();
+    }
+
     pub fn cells(&self) -> *const Cell {
         self.cells.as_ptr()
     }
@@ -187,7 +192,10 @@ impl Universe {
     pub fn add_pulsar(&mut self, row: u32, column: u32) {
         let idx = self.get_index(row, column);
         self.gen_pulsar(idx);
-        
+    }
+
+    pub fn add_spaceship(&mut self, row: u32, column: u32) {
+        self.gen_spaceship(row, column);
     }
 
     pub fn tick(&mut self) {
