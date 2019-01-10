@@ -23,8 +23,8 @@ impl Universe {
         index as u32 / self.width
     }
 
-    fn get_col(&self, row: u32, index: usize) -> u32 {
-        index as u32 - (row * self.width)
+    fn get_col(&self, index: usize) -> u32 {
+        index as u32 % self.width
     }
 
 
@@ -64,6 +64,9 @@ impl Universe {
     // return whether the given index in relation to the starting
     // coordinate is a dead or alive cell for initial pulsar gen
     fn gen_pulsar(&mut self, index: usize) {
+        let start_row = self.get_row(index) - 6;
+        let start_col = self.get_col(index) - 6;
+        let index = self.get_index(start_row, start_col);
         for row in 0..13 {
             for col in 0..13 {
                 let idx = (index as u32 + row * self.width + col) as usize;
